@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
+    <title>Lobby</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <style>
+        .test2{
+            margin:auto;
+            padding: 20px;
+
+            padding: 40px;
+            width: 40%;
+        }
+    </style>
+</head>
+<body onload="myFunction()">
+<div class="test2">
+    <!--/*@thymesVar id="roomInfo" type="templates"*/-->
+    <!--/*@thymesVar id="roomNumber" type="templates"*/-->
+    <h1>Room <span th:text="${roomInfo.roomNumber}"> Title </span></h1>
+    <h1>Hello <span th:text="${CurrentPlayer.Name}"> Title </span></h1>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">UserName</th>
+    </tr>
+    </thead>sub
+    <tbody id="contentTableBody">
+    </tbody>
+</table>
+    <form  th:action="@{/startGame/{roomInfo}/{player}(roomInfo = ${roomInfo.roomNumber}, player=${CurrentPlayer.id})}" method="post">
+        <input type="submit" th:value="button" class="btn btn-success">
+    </form>
+
+
+</div>
+
+<script th:inline="javascript">
+    var interval;
+
+    function myFunction() {
+        //აქ რაც წერია ქვევით არის მთლიანად ის რომ რაღაცაა ვერიებლი შევავსო იმ ინფოთი რაც დააბრუნა  @RequestMapping("/lobby/{roomNumber}") <- ამან კონტროლერში.
+        //ეგ აბრუნებს უკვე შევსებულ html-ფორმას (თუ რაღაც ეგეეთს, მაგრამ თან აყოლებს რასაც ცავუწერ ატრიბურად, ამ შემთხვევაში roomInfo) და არა ჯსონს ან რამეს
+        /*<![CDATA[*/
+        var roomNumber = /*[[${roomInfo.roomNumber}]]*/ 'default';
+        /*]]>*/
+        loadDoc(roomNumber);
+        interval = setInterval(function(){loadDoc(roomNumber); }, 3000);
+    }
+    var oldtext;
+    var oldNumber=0;
+    function loadDoc(roomNumber) {
+        if(oldNumber>3){
+                clearInterval(interval);
+        }
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            //ეს ჩემი ლოგიკაა პროსტა, რომ მარტო დავამატო თეიბლს როუ როცა ახალი ჩანაწერი მოვა, ანუ ძველისგან განსახვავებული იქნება
+            if(oldtext != this.responseText) {
+                oldtext=this.responseText;
+                console.log(this.responseText);
+                var myObj = JSON.parse(this.responseText);
+                var tbody = document.getElementById("contentTableBody");
+                //ეს წინაზე რამდენი ობიექტიც იყო იმის მერე ინდექსიდან იწყებს
+                for(i = oldNumber; i <myObj.length; i++){
+                    var tr = tbody.insertRow();
+                    var td1 = tr.insertCell();
+                    var td2 = tr.insertCell();
+                    var name = document.createTextNode(myObj[i].name);
+                    var number = document.createTextNode(i+1);
+                    td1.appendChild(number);
+                    td2.appendChild(name);
+                }
+                oldNumber = myObj.length;
+            }
+        }
+    };
+        xhttp.open("GET", "/checkMembers/"+roomNumber, true);
+        xhttp.send();
+    }
+
+</script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>

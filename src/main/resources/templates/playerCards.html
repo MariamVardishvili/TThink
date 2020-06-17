@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smoke Tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style>
+        {
+            box-sizing: border-box;
+        }
+        container{
+            margin-left: 200px;
+        }
+        .imgContainer{
+            float:left;
+            margin:5px;
+            border: 3px solid white;
+            border-radius: 6px;
+        }
+
+        .imgelement{
+            width: 150px;
+            height: 220px;
+        }
+        .imgContainerFrame{
+            border: 3px solid blue;
+            border-radius: 6px;
+        }
+
+        .zoom {
+            width: 300px;
+            height: 440px;
+        }
+
+        .styleImage {
+            width: 300px;
+            height: 440px;
+            border: 3px solid red;
+            border-radius: 6px;
+            margin: auto;
+        }
+        .styleImage1 {
+            width: 295px;
+            height: 435px;
+            border: 3px solid red;
+            border-radius: 6px;
+            margin: auto;
+        }
+
+    </style>
+</head>
+<body>
+<button type="button" id="getCards" class="btn btn-primary" onclick="getAdditionalCard()">Get Cards</button>
+<button type="button" id="PlayYourCard" onclick="playYourCard()" class="btn btn-success">Success</button>
+<div id="mainContainer" class="container" >
+</div>
+<br style="clear: left;" />
+<div class="styleImage">
+    <img src="Resources\cards\0.jpg" class="styleImage1" id="styleImg">
+
+</div>
+<p onclick="myFunction()">asdad</p>
+<script th:inline="javascript">
+    var roomNumber
+    var  ImgIndexLists;
+    function myFunction() {
+        //აქ რაც წერია ქვევით არის მთლიანად ის რომ რაღაცაა ვერიებლი შევავსო იმ ინფოთი რაც დააბრუნა  @RequestMapping("/lobby/{roomNumber}") <- ამან კონტროლერში.
+        //ეგ აბრუნებს უკვე შევსებულ html-ფორმას (თუ რაღაც ეგეეთს, მაგრამ თან აყოლებს რასაც ცავუწერ ატრიბურად, ამ შემთხვევაში roomInfo) და არა ჯსონს ან რამეს
+        /*<![CDATA[*/
+        roomNumber = /*[[${playerCards}]]*/ 'default';
+        /*]]>*/
+        for(var i=0; i<roomNumber.length; i++){
+            ImgIndexLists[i]=roomNumber[i].imageNumber;
+        }
+        alert(roomNumber);
+    }
+
+    var imgIndex = 0;
+    function markImage(clicked_id)
+    {
+        var maindiv = document.getElementById("mainContainer");
+        var divs = maindiv.getElementsByClassName("imgContainerFrame");
+        if(divs.length>0){
+            divs[0].classList.remove("imgContainerFrame");
+        }
+        var element = document.getElementById(clicked_id);
+
+        if(element.classList.contains("imgContainer")){
+            element.classList.add("imgContainerFrame");
+        }
+        var firstIMG = element.getElementsByTagName('img')[0];
+        var imgelement = document.getElementById("styleImg");
+        imgelement.src = firstIMG.src;
+        imgelement.alt = clicked_id;
+    }
+
+
+    function playYourCard()
+    {
+        var markedImage = document.getElementById("styleImg");
+        var divId = markedImage.alt;
+        var markedDiv = document.getElementById(divId);
+
+        markedDiv.parentNode.removeChild(markedDiv);
+        markedImage.src = "resources/static/cards/0.jpg";
+    }
+
+    function myFunction(){
+        var maindiv = document.getElementById("mainContainer");
+        var divs = maindiv.getElementsByClassName("imgContainerFrame");
+        var imgDiv = document.createElement("div");
+        imgDiv.classList.add("imgContainer");
+        var imgNode = document.createElement("IMG");;
+        imgDiv.appendChild(imgNode);
+        imgNode.setAttribute("src", "resources/static/cards/card_0009.jpg");
+        imgNode.classList.add("imgelement");
+        imgNode.classList.add("img-rounded");
+        var element = document.getElementById("mainContainer");
+        imgDiv.setAttribute("id", "13");
+        imgDiv.onclick =function(){markImage("13");}
+        element.appendChild(imgDiv);
+    }
+
+
+    function getAdditionalCard(){
+        var maindiv = document.getElementById("mainContainer");
+        var divs = maindiv.getElementsByClassName("imgContainer");
+        if(divs.length>5){
+            //	 alert("არ გინდა მეტი კარტი, ბიჭო!");
+            return;
+        }
+        var imgDiv = document.createElement("div");
+        imgDiv.classList.add("imgContainer");
+        var imgNode = document.createElement("IMG");;
+        imgDiv.appendChild(imgNode);
+        var imgname= ImgIndexLists[imgIndex];
+        imgNode.setAttribute("src", "static/cards/card_000" +imgname +".jpg");
+        imgNode.classList.add("imgelement");
+        //imgNode.classList.add("zoom");
+        imgNode.classList.add("img-rounded");
+        var element = document.getElementById("mainContainer");
+        imgDiv.setAttribute("id", imgname);
+        imgDiv.onclick =function(){markImage(imgname);}
+        imgNode.ondblclick =function(){zoomImage(imgname);}
+
+        element.appendChild(imgDiv);
+        imgIndex=imgIndex+1;
+        getAdditionalCard();
+    }
+
+
+</script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>

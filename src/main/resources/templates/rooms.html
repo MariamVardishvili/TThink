@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smoke Tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th> Title </th>
+        <th> Author </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${roomList.empty}">
+        <td colspan="2"> No Rooms Available </td>
+    </tr>
+    <tr th:each="room : ${roomList}">
+        <td> Rooms </td>
+        <td><span th:text="${room.roomNumber}"> Title </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
