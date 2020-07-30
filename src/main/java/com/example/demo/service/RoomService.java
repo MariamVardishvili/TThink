@@ -15,6 +15,8 @@ public class RoomService {
     RoomRepository roomrepo;
     @Autowired
     PlayerService playerService;
+    @Autowired
+    PlayerCardsService playerCardsService;
 
     int getRoomNumber(){
         int roomnumber;
@@ -32,17 +34,27 @@ public class RoomService {
         return roomrepo.findAllByActiveIsTrue();
     }
 
-    public Optional<GameRoom> getActiveRooms(int roomNumber){
+    public Optional<GameRoom> getActiveRoom(int roomNumber){
         return roomrepo.findByRoomNumber(roomNumber);
     }
     public Optional<GameRoom> getActiveRoomsAndPlayer(int roomNumber){
         return roomrepo.findByRoomNumber(roomNumber);
     }
 
-    public int createNewRoom(String userName){
+    public Player createNewRoom(String userName){
         GameRoom g = new GameRoom(getRoomNumber());
         roomrepo.save(g);
-        playerService.connectPlayerAndRoom(userName, g.getRoomNumber());
-        return g.getRoomNumber();
+        Player player = playerService.connectPlayerAndRoom(userName, g.getRoomNumber(), true);
+        return player;
+    }
+
+    public void startGame(GameRoom room) {
+        room.setStarted(true);
+        room.setRound(1);
+        GameRoom gameroom = roomrepo.save(room);
+        List<Player> players = playerService.getActivePlayersFromRoom(gameroom.getRoomNumber());
+        playerService.setOrder(room);
+        System.out.println("returned Players"+players);
+        playerCardsService.genereatecardsForPlayers(players);
     }
 }

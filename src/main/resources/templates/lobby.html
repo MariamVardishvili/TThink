@@ -24,24 +24,33 @@
 <div class="test2">
     <!--/*@thymesVar id="roomInfo" type="templates"*/-->
     <!--/*@thymesVar id="roomNumber" type="templates"*/-->
-    <h1>Room <span th:text="${roomInfo.roomNumber}"> Title </span></h1>
-    <h1>Hello <span th:text="${CurrentPlayer.Name}"> Title </span></h1>
+    <h2>Room <span th:text="${player.room.roomNumber}"> Title </span></h2>
+    <h1>Hello <span th:text="${player.Name}"> Title </span></h1>
+    <h1>Hello <span th:text="${player.room.started}"> Title </span></h1>
+     
+   <h3> <span th:if="${player.roomOwner== true}"> შენ ხარ ადმინი </span></h3>
 <table class="table table-bordered">
     <thead class="thead-dark">
     <tr>
         <th scope="col">#</th>
         <th scope="col">UserName</th>
     </tr>
-    </thead>sub
+    </thead>
     <tbody id="contentTableBody">
     </tbody>
 </table>
-    <form  th:action="@{/startGame/{roomInfo}/{player}(roomInfo = ${roomInfo.roomNumber}, player=${CurrentPlayer.id})}" method="post">
-        <input type="submit" th:value="button" class="btn btn-success">
-    </form>
-
-
+    <span th:if="${player.roomOwner== true}" method="POST">
+        <form action="/startGame" >
+            <button type="submit" class="btn btn-primary bg-success">Start Game</button>
+        </form>
+    </span>
+    <span th:if="${player.roomOwner== false}" method="POST">
+        <form action="/playerHand" id="startGameForm" >
+            <button id="startGameFormbutton"  type="submit" class="btn btn-primary bg-success" disabled>Start Game</button>
+        </form>
+    </span>
 </div>
+
 
 <script th:inline="javascript">
     var interval;
@@ -49,23 +58,28 @@
     function myFunction() {
         //აქ რაც წერია ქვევით არის მთლიანად ის რომ რაღაცაა ვერიებლი შევავსო იმ ინფოთი რაც დააბრუნა  @RequestMapping("/lobby/{roomNumber}") <- ამან კონტროლერში.
         //ეგ აბრუნებს უკვე შევსებულ html-ფორმას (თუ რაღაც ეგეეთს, მაგრამ თან აყოლებს რასაც ცავუწერ ატრიბურად, ამ შემთხვევაში roomInfo) და არა ჯსონს ან რამეს
-        /*<![CDATA[*/
-        var roomNumber = /*[[${roomInfo.roomNumber}]]*/ 'default';
-        /*]]>*/
-        loadDoc(roomNumber);
-        interval = setInterval(function(){loadDoc(roomNumber); }, 3000);
+    //    /*<![CDATA[*/
+    //    var roomNumber = /*[[${player.room.roomNumber}]]*/ 'default';
+    //    /*]]>*/
+        loadDoc();
+        interval = setInterval(function(){loadDoc(); }, 3000);
     }
+    var startedGame;
+    var f;
     var oldtext;
     var oldNumber=0;
-    function loadDoc(roomNumber) {
+    function loadDoc() {
         if(oldNumber>3){
                 clearInterval(interval);
         }
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+
             //ეს ჩემი ლოგიკაა პროსტა, რომ მარტო დავამატო თეიბლს როუ როცა ახალი ჩანაწერი მოვა, ანუ ძველისგან განსახვავებული იქნება
             if(oldtext != this.responseText) {
+
+
                 oldtext=this.responseText;
                 console.log(this.responseText);
                 var myObj = JSON.parse(this.responseText);
@@ -81,10 +95,17 @@
                     td2.appendChild(name);
                 }
                 oldNumber = myObj.length;
+                if(myObj[0].room.started){
+                   // alert("Started " + startedGame);
+                    clearInterval(interval);
+                    f = document.getElementById('startGameFormbutton');
+                    f.disabled=false;
+                    document.forms["startGameForm"].submit();
+                }
             }
         }
     };
-        xhttp.open("GET", "/checkMembers/"+roomNumber, true);
+        xhttp.open("POST", "/checkMembers", true);
         xhttp.send();
     }
 

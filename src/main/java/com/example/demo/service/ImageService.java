@@ -19,7 +19,7 @@ public class ImageService {
     void initiateImages(){
         List<Images> all = imgRepo.findAll();
         if(all.size()==0){
-            for (int i = 0 ; i < 20; i++){
+            for (int i = 1 ; i < 20; i++){
                 Images img = new Images();
                 img.setNumber(i);
                  imgRepo.save(img);

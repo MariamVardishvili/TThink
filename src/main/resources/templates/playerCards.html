@@ -1,7 +1,16 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+<!-- Required meta tags -->
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"/>
+<title>Lobby</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
 <head>
-    <title>Smoke Tests</title>
+    <title>Play the game</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style>
         {
@@ -48,32 +57,51 @@
 
     </style>
 </head>
-<body>
-<button type="button" id="getCards" class="btn btn-primary" onclick="getAdditionalCard()">Get Cards</button>
+<body onload="initilize()">
+<button type="button" id="getCards" class="btn btn-primary" onclick="refreshCards()">Get Cards</button>
 <button type="button" id="PlayYourCard" onclick="playYourCard()" class="btn btn-success">Success</button>
 <div id="mainContainer" class="container" >
 </div>
 <br style="clear: left;" />
 <div class="styleImage">
-    <img src="Resources\cards\0.jpg" class="styleImage1" id="styleImg">
+    <img src="\cards\0.jpg" class="styleImage1" id="styleImg">
 
 </div>
-<p onclick="myFunction()">asdad</p>
+<div>
+<table class="table table-bordered" style="width: 50%">
+<tr th:each="playerc: ${playersInOrder}">
+    <td th:text="${playerc.name}" th:id="${player.id}"  />
+    <td th:text="${playerc.playerOrder}" />
+    <td th:text="${playerc.room.round}" />
+</tr>
+</table>
+</div>
+<h1 th:text="${playerForThisRound.name}"> </h1>
+<a  onclick="everyTime()"> Click me!</a>
 <script th:inline="javascript">
-    var roomNumber
-    var  ImgIndexLists;
-    function myFunction() {
+    /*<![CDATA[*/
+    var imageNumbers
+    var  ImgIndexLists=[];
+    function initilize() {
         //აქ რაც წერია ქვევით არის მთლიანად ის რომ რაღაცაა ვერიებლი შევავსო იმ ინფოთი რაც დააბრუნა  @RequestMapping("/lobby/{roomNumber}") <- ამან კონტროლერში.
         //ეგ აბრუნებს უკვე შევსებულ html-ფორმას (თუ რაღაც ეგეეთს, მაგრამ თან აყოლებს რასაც ცავუწერ ატრიბურად, ამ შემთხვევაში roomInfo) და არა ჯსონს ან რამეს
-        /*<![CDATA[*/
-        roomNumber = /*[[${playerCards}]]*/ 'default';
-        /*]]>*/
-        for(var i=0; i<roomNumber.length; i++){
-            ImgIndexLists[i]=roomNumber[i].imageNumber;
-        }
-        alert(roomNumber);
-    }
 
+        console.log("You are in myFunction" )
+        imageNumbers = /*[[${playerCardss}]]*/ 'default';
+
+
+        for(var i=0; i<imageNumbers.length; i++){
+            ImgIndexLists.push(imageNumbers[i].imageNumber);
+        }
+
+    }
+    var sthElse;
+    function everyTime() {
+        console.log("You are in myFunction" )
+        imageNumbers = /*[[${playerForThisRound}]]*/ 'default';
+
+        alert(sthElse)
+    }
     var imgIndex = 0;
     function markImage(clicked_id)
     {
@@ -101,7 +129,7 @@
         var markedDiv = document.getElementById(divId);
 
         markedDiv.parentNode.removeChild(markedDiv);
-        markedImage.src = "resources/static/cards/0.jpg";
+        markedImage.src = "/cards/0.jpg";
     }
 
     function myFunction(){
@@ -111,7 +139,7 @@
         imgDiv.classList.add("imgContainer");
         var imgNode = document.createElement("IMG");;
         imgDiv.appendChild(imgNode);
-        imgNode.setAttribute("src", "resources/static/cards/card_0009.jpg");
+        imgNode.setAttribute("src", "/cards/card_0009.jpg");
         imgNode.classList.add("imgelement");
         imgNode.classList.add("img-rounded");
         var element = document.getElementById("mainContainer");
@@ -119,21 +147,26 @@
         imgDiv.onclick =function(){markImage("13");}
         element.appendChild(imgDiv);
     }
-
+    function refreshCards() {
+        var maindiv = document.getElementById("mainContainer");
+        maindiv.querySelectorAll('*').forEach(n => n.remove());
+        imgIndex=0;
+        getAdditionalCard();
+    }
 
     function getAdditionalCard(){
         var maindiv = document.getElementById("mainContainer");
         var divs = maindiv.getElementsByClassName("imgContainer");
         if(divs.length>5){
-            //	 alert("არ გინდა მეტი კარტი, ბიჭო!");
             return;
         }
+
         var imgDiv = document.createElement("div");
         imgDiv.classList.add("imgContainer");
         var imgNode = document.createElement("IMG");;
         imgDiv.appendChild(imgNode);
         var imgname= ImgIndexLists[imgIndex];
-        imgNode.setAttribute("src", "static/cards/card_000" +imgname +".jpg");
+        imgNode.setAttribute("src", "./cards/card_000" +imgname +".jpg");
         imgNode.classList.add("imgelement");
         //imgNode.classList.add("zoom");
         imgNode.classList.add("img-rounded");
@@ -146,7 +179,8 @@
         imgIndex=imgIndex+1;
         getAdditionalCard();
     }
-
+    var sthElse;
+    /*]]>*/
 
 </script>
 <!-- Optional JavaScript -->

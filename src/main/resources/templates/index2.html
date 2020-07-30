@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <style>
+        .button {
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .button1 {background-color: green;} /* Green */
+        .button2 {background-color: blue;} /* Blue */
+        .button3 {background-color: red;} /* Red */
+        .test{
+            margin: auto;
+            width: 40%;
+
+            padding: 10px;
+        }
+        .test2{
+            margin: auto;
+            width: 30%;
+            border: 2px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="test">
+<a href='/newRoom'><button class="button button1"> ახალი ოთახის შექმნა</button></a>
+<a href='/activeRooms'><button class="button button3">არსებული ოთახები</button></a>
+
+
+<div class="test2">
+    <form action="/joinRoom">
+        <label for="userName">Name:</label> <br>
+        <input type="text" id="userName" name="userName"></input> <br><br>
+        <label for="roomNumber">Room Number:</label> <br>
+        <input type="text" id="roomNumber" name="roomNumber"></input> <br> <br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</div>
+</body>
+</html>

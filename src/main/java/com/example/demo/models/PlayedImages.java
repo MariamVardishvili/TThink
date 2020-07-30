@@ -12,6 +12,7 @@ public class PlayedImages {
     long playerId;
     int imageNumber;
     Boolean active;
+    Integer round;
 
     public Integer getId() {
         return id;

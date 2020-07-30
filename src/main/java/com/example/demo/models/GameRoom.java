@@ -1,11 +1,14 @@
 package com.example.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.List;
 
 
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class GameRoom {
     @Id
@@ -14,8 +17,9 @@ public class GameRoom {
     @Column(unique = true)
     int roomNumber;
     Boolean active;
+    Boolean started;
+    int round;
     @JsonIgnore
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy =  "room")
     List<Player> players;
 
@@ -23,6 +27,7 @@ public class GameRoom {
     public GameRoom(int room){
         roomNumber = room;
         active = true;
+        started = false;
     }
 
     public int getRoomNumber() {
@@ -48,6 +53,22 @@ public class GameRoom {
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public Boolean getStarted() {
+        return started;
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
     }
 
     @Override

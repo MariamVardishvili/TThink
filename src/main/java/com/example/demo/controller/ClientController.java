@@ -37,12 +37,12 @@ public class ClientController {
     @Autowired
     private PlayerCardsService playerCardsService;
 
-    @RequestMapping("/")
+    /*@RequestMapping("/")
     public ModelAndView welcome() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index1.html");
         return modelAndView;
-    }
+    }*/
 
     @RequestMapping("/activeRooms")
     public ModelAndView activeRooms() {
@@ -58,14 +58,15 @@ public class ClientController {
     public ModelAndView activeRooms(@PathVariable int roomNumber) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("rooms.html");
-        roomService.getActiveRooms(roomNumber);
+        roomService.getActiveRoom(roomNumber);
         return modelAndView;
     }
 
-    @RequestMapping(value = "/joinRoom")
-    public RedirectView joinRoom(@RequestParam("userName") String userName, @RequestParam("roomNumber") int roomNumber,  RedirectAttributes atts) {
+    /*@RequestMapping(value = "/joinRoom")
+    public RedirectView joinRoom(@RequestParam("userName") String userName, @RequestParam("roomNumber") int roomNumber, ModelMap modelMap,  RedirectAttributes atts) {
 
         Player currentPlayer = playerService.connectPlayerAndRoom(userName, roomNumber);
+        modelMap.put("player", userName);
         if(currentPlayer!=null) {
             RedirectView view = new RedirectView("/lobby/" + roomNumber);
             atts.addFlashAttribute("CurrentPlayer", currentPlayer);
@@ -78,9 +79,10 @@ public class ClientController {
 
 
     @RequestMapping("/lobby/{roomNumber}")
-    public ModelAndView lobby(@PathVariable int roomNumber, @ModelAttribute("CurrentPlayer") final Player currentPlayer) {
+    public ModelAndView lobby(@PathVariable int roomNumber, @ModelAttribute("CurrentPlayer") final Player currentPlayer, ModelMap modelMap) {
         ModelAndView modelAndView = new ModelAndView();
-
+        String nams = (String) modelMap.get("player");
+        System.out.println(nams+"------------------------------------");
         Optional<GameRoom> activeRoom = roomService.getActiveRooms(roomNumber);
         activeRoom.get().getPlayers().size();
         modelAndView.setViewName("lobby.html");
@@ -92,7 +94,9 @@ public class ClientController {
     @RequestMapping(value ="/checkMembers/{roomNumber}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public  List<Player> checkMembers(@PathVariable int roomNumber) {
+    public  List<Player> checkMembers(@PathVariable int roomNumber, ModelMap modelMap) {
+        String nams = (String) modelMap.get("player");
+        System.out.println(nams+"=====================================");
         List<Player> activePlayersFromRoom = playerService.getActivePlayersFromRoom(roomNumber);
         String a = "";
         for(Player pl : activePlayersFromRoom){
@@ -101,6 +105,7 @@ public class ClientController {
         }
         return activePlayersFromRoom;
     }
+
     @RequestMapping(value = "/newRoom")
     public ModelAndView newRoom(@RequestParam("userName") String userName) {
         int roomNumber =  roomService.createNewRoom(userName);
@@ -108,12 +113,12 @@ public class ClientController {
        // modelAndView.addObject("roomNumber", roomNumber);
         modelAndView.setViewName("redirect:/lobby/"+roomNumber);
         return modelAndView;
-    }
+    }*/
 
     @RequestMapping(value = "/test/{roomNumber}")
     @ResponseBody
     public Optional<GameRoom>  test(@PathVariable int roomNumber) {
-        Optional<GameRoom> activeRooms = roomService.getActiveRooms(roomNumber);
+        Optional<GameRoom> activeRooms = roomService.getActiveRoom(roomNumber);
         activeRooms.get().getPlayers().size();
         System.out.println();
         return activeRooms;
@@ -124,19 +129,20 @@ public class ClientController {
     public ModelAndView myerror() {
         System.out.println("here hererer I am jereeeeeeeee");
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index1.html");
+        modelAndView.setViewName("index.html");
         modelAndView.addObject("ErMessage", "Room not Found");
 
         return modelAndView;
     }
-
+/*
     @RequestMapping("/startGame/{roomNumber}/{player}")
     public RedirectView startGame(@PathVariable int roomNumber, @PathVariable long player, RedirectAttributes atts) {
         RedirectView view = new RedirectView("/playerHand");
         atts.addFlashAttribute("CurrentPlayer", player);
         return  view;
-
     }
+
+
     @RequestMapping("/playerHand")
     public ModelAndView personalHand(@ModelAttribute("CurrentPlayer") final long currentPlayer) {
         ModelAndView modelAndView = new ModelAndView();
@@ -149,5 +155,5 @@ public class ClientController {
 
         return modelAndView;
     }
-
+*/
 }
